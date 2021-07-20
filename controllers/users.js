@@ -24,26 +24,15 @@ const getUserById = (req, res) => {
 
 const createUser = (req, res) => {
   // INSERT INTO USERS FIRST AND LAST NAME 
-  let sql = 'INSERT INTO ?? (??, ??) VALUES (?,?); INSERT INTO ?? (??, ??, ??, ??) VALUES (?,?,?,?); INSERT INTO ?? (??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?);'
+  let sql = 'INSERT INTO ?? (??, ??) VALUES (?,?);'
   // WHAT GOES IN THE BRACKETS
-  sql = mysql.format(sql, ['users', 'first_name', 'last_name', req.body.first_name, req.body.last_name,
-   'usersContact', 'user_id', 'phone1', 'phone2', 'email', req.body.user_id, req.body.phone1, req.body.phone2, req.body.email,
-  'usersAddress', 'user_id', 'address', 'city', 'county', 'state', 'zip', req.body.user_id, req.body.address, req.body.city, req.body.county, req.body.state, req.body.zip])
+  sql = mysql.format(sql, ['users', 'first_name', 'last_name', req.body.first_name, req.body.last_name])
 
   pool.query(sql, (err, results) => {
     if (err) return handleSQLError(res, err)
     return res.json({ newId: results.insertId, 
                       first_name: req.body.first_name, 
-                      last_name: req.body.last_name,
-                      user_id: req.body.user_id,
-                     phone1: req.body.phone1,
-                    phone2: req.body.phone2,
-                  email: req.body.email,
-                address: req.body.address,
-              city: req.body.city,
-            county: req.body.county,
-          state: req.body.state,
-        zip: req.body.zip});
+                      last_name: req.body.last_name});
   })
 }
 
