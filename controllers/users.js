@@ -4,7 +4,7 @@ const { handleSQLError } = require('../sql/error')
 
 const getAllUsers = (req, res) => {
   // SELECT ALL USERS
-  pool.query("SELECT * FROM users, usersContact, usersAddress LIMIT 1000", (err, rows) => {
+  pool.query("SELECT * FROM users, usersContact, usersAddress WHERE usersContact.user_id = users.id AND usersAddress.user_id = users.id", (err, rows) => {
     if (err) return handleSQLError(res, err)
     return res.json(rows);
   })
@@ -24,15 +24,26 @@ const getUserById = (req, res) => {
 
 const createUser = (req, res) => {
   // INSERT INTO USERS FIRST AND LAST NAME 
-  let sql = 'INSERT INTO ?? (??, ??) VALUES (?, ?)'
+  let sql = 'INSERT INTO ?? (??, ??) VALUES (?,?); INSERT INTO ?? (??, ??, ??, ??) VALUES (?,?,?,?); INSERT INTO ?? (??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?);'
   // WHAT GOES IN THE BRACKETS
-  sql = mysql.format(sql, ['users', 'first_name', 'last_name', req.body.first_name, req.body.last_name])
+  sql = mysql.format(sql, ['users', 'first_name', 'last_name', req.body.first_name, req.body.last_name,
+   'usersContact', 'user_id', 'phone1', 'phone2', 'email', req.body.user_id, req.body.phone1, req.body.phone2, req.body.email,
+  'usersAddress', 'user_id', 'address', 'city', 'county', 'state', 'zip', req.body.user_id, req.body.address, req.body.city, req.body.county, req.body.state, req.body.zip])
 
   pool.query(sql, (err, results) => {
     if (err) return handleSQLError(res, err)
     return res.json({ newId: results.insertId, 
                       first_name: req.body.first_name, 
-                      last_name: req.body.last_name});
+                      last_name: req.body.last_name,
+                      user_id: req.body.user_id,
+                     phone1: req.body.phone1,
+                    phone2: req.body.phone2,
+                  email: req.body.email,
+                address: req.body.address,
+              city: req.body.city,
+            county: req.body.county,
+          state: req.body.state,
+        zip: req.body.zip});
   })
 }
 
